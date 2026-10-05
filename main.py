@@ -32,6 +32,11 @@ def parse_arguments():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
+        "--web", "-w",
+        action="store_true",
+        help="Launch modern Streamlit web application",
+    )
+    parser.add_argument(
         "--gui", "-g",
         action="store_true",
         help="Launch modern Desktop GUI calculator",
@@ -63,6 +68,13 @@ def main():
             print(f"Error: {err}", file=sys.stderr)
             sys.exit(1)
 
+    # Directly launch Web App
+    if args.web:
+        import subprocess
+        print("Launching Streamlit Web App...")
+        subprocess.run([sys.executable, "-m", "streamlit", "run", "streamlit_app.py"])
+        sys.exit(0)
+
     # Directly launch GUI
     if args.gui:
         try:
@@ -86,11 +98,12 @@ def main():
     print("Choose interface:")
     print("  [1] Interactive Terminal CLI")
     print("  [2] Modern Desktop GUI (Tkinter)")
+    print("  [3] Modern Web App (Streamlit)")
     print("  [Q] Exit")
 
     while True:
         try:
-            choice = input("\nEnter choice [1/2/Q] (default: 1): ").strip()
+            choice = input("\nEnter choice [1/2/3/Q] (default: 1): ").strip()
         except (KeyboardInterrupt, EOFError):
             print("\nGoodbye!")
             sys.exit(0)
@@ -108,11 +121,16 @@ def main():
                 print(f"Could not open GUI: {e}. Opening CLI instead.")
                 main_cli()
                 break
+        elif choice == "3":
+            import subprocess
+            print("Launching Streamlit Web App...")
+            subprocess.run([sys.executable, "-m", "streamlit", "run", "streamlit_app.py"])
+            break
         elif choice.upper() in ("Q", "QUIT", "EXIT"):
             print("Goodbye!")
             break
         else:
-            print("Invalid choice. Please enter 1, 2, or Q.")
+            print("Invalid choice. Please enter 1, 2, 3, or Q.")
 
 
 if __name__ == "__main__":
